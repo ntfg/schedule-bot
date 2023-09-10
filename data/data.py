@@ -14,8 +14,22 @@ class Data:
             self.cur.execute("SELECT * FROM lessons")
         except:
             sql_script = open("data/script.sql", "r").read()
-            self.cur.execute(sql_script)
+            self.cur.executescript(sql_script)
+            
+    def user_exists(self, user_id: int) -> bool:
+        return self.cur.execute(f'SELECT * FROM users WHERE user_id = {user_id}').fetchone()
+
+    def class_exists(self, user_class: str) -> bool:
+        return self.cur.execute(f'SELECT * FROM lessons WHERE class LIKE "{user_class}"').fetchone()
     
-    def update_data(self, xl_files: List[str]):
-        for weekday, file_name in enumerate(xl_files, start=1):
-            pass
+    def update_class(self, user_id: int, user_class: str) -> None:
+        self.cur.execute(f'DELETE FROM users WHERE user_id = {user_id}')
+        self.cur.execute(f'INSERT INTO users (user_id, class) VALUES ({user_id}, "{user_class}")')
+        self.con.commit()
+        
+    def get_schedule(self, user_id: int, weekday: int) -> List[tuple]: 
+        return self.cur.execute(f'''SELECT * FROM lessons 
+                                    WHERE class = (SELECT class FROM users WHERE user_id = {user_id}) AND weekday = {weekday}
+                                    ORDER BY number''').fetchall()
+        
+        

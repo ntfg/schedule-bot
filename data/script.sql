@@ -7,3 +7,10 @@ CREATE TABLE "lessons" (
 	"weekday"	INTEGER,
 	PRIMARY KEY("id" AUTOINCREMENT)
 );
+
+CREATE TABLE "users" (
+	"id"	INTEGER NOT NULL,
+	"user_id"	INTEGER,
+	"class"	TEXT,
+	PRIMARY KEY("id" AUTOINCREMENT)
+);
